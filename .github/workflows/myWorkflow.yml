@@ -1,33 +1,17 @@
-name: PHP CI
+name: Super-Linter
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+on: push
 
 jobs:
-  build:
-
+  super-lint:
+    name: Lint code base
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-versions: [7.4, 8.0, 8.1, 8.2]
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-versions }}
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Run Super-Linter
+        uses: github/super-linter@v4
         env:
-          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }} # Optional if using private packages
-
-      - name: Run tests
-        run: vendor/bin/phpunit
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
