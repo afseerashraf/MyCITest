@@ -1,0 +1,33 @@
+name: PHP CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-versions: [7.4, 8.0, 8.1, 8.2]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+        env:
+          COMPOSER_AUTH: ${{ secrets.COMPOSER_AUTH }} # Optional if using private packages
+
+      - name: Run tests
+        run: vendor/bin/phpunit
